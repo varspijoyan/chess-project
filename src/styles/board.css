@@ -1,0 +1,52 @@
+.board {
+  width: min(92vw, 520px);
+  aspect-ratio: 1 / 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+.board__square {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.board__square--light {
+  background-color: #cbd5e1;
+}
+
+.board__square--dark {
+  background-color: #334155;
+}
+
+.board__square--selected {
+  outline: 3px solid rgba(250, 204, 21, 0.9);
+  outline-offset: -3px;
+}
+
+.board__square--legal {
+  box-shadow: inset 0 0 0 3px rgba(250, 204, 21, 0.35);
+}
+
+.board__piece {
+  font-size: clamp(24px, 5vw, 40px);
+  line-height: 1;
+  user-select: none;
+  filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.35));
+}
+
+.board__dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background-color: rgba(15, 23, 42, 0.35);
+}
+

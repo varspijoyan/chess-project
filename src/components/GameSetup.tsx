@@ -1,8 +1,13 @@
 import React from "react";
 import { useGameSetup } from "../hooks/useGameSetup";
 import "../styles/game-setup.css";
+import type { GameConfig } from "../types";
 
-export const GameSetup: React.FC = () => {
+export interface GameSetupProps {
+  onStart: (config: GameConfig) => void;
+}
+
+export const GameSetup: React.FC<GameSetupProps> = ({ onStart }) => {
   const {
     mode,
     startingColor,
@@ -79,6 +84,16 @@ export const GameSetup: React.FC = () => {
           {startingColor === "white" ? "White" : "Black"}
         </p>
       </footer>
+
+      <div className="game-setup__actions">
+        <button
+          type="button"
+          className="game-setup__start"
+          onClick={() => onStart({ mode, startingColor })}
+        >
+          Start game
+        </button>
+      </div>
     </section>
   );
 };

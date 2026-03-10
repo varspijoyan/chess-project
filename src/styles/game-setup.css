@@ -81,3 +81,24 @@
   font-weight: 600;
 }
 
+.game-setup__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.game-setup__start {
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background-color: var(--accent-color);
+  color: #020617;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease-out, filter 0.15s ease-out;
+}
+
+.game-setup__start:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
