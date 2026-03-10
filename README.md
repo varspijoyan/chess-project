@@ -1,2 +1,2 @@
 # chess-project
-This project is made with the help of Cursor.ai
+This project is made by Cursor.ai
