@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Board, GameConfig, Move, Piece, PieceType, PlayerColor, Square } from "../types";
-
-type GameStatus = "playing" | "checkmate" | "stalemate";
+import type { Board, GameConfig, Move, Piece, PieceType, PlayerColor, Square, GameStatus } from "../types";
 
 const opposite = (c: PlayerColor): PlayerColor => (c === "white" ? "black" : "white");
 

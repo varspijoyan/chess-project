@@ -29,3 +29,4 @@ export interface Move {
 
 export type Board = Array<Array<Piece | null>>;
 
+export type GameStatus = "playing" | "checkmate" | "stalemate";
