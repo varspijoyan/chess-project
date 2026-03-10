@@ -22,6 +22,10 @@ body {
 }
 
 .App {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   padding: 2rem 3rem;
   border-radius: var(--border-radius-lg);
