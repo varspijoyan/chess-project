@@ -69,6 +69,37 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
 
         <MoveHistory history={history} />
       </div>
+
+      {(status === "checkmate" || status === "stalemate") && (
+        <div className="game__overlay" role="dialog" aria-modal="true">
+          <div className="game__dialog">
+            <h2 className="game__dialog-title">
+              {status === "checkmate" ? "Checkmate" : "Stalemate"}
+            </h2>
+            <p className="game__dialog-text">
+              {status === "checkmate" && winner
+                ? `${winner === "white" ? "White" : "Black"} wins by checkmate.`
+                : "Draw by stalemate."}
+            </p>
+            <div className="game__dialog-actions">
+              <button
+                type="button"
+                className="game__button"
+                onClick={reset}
+              >
+                Play again
+              </button>
+              <button
+                type="button"
+                className="game__button"
+                onClick={onBack}
+              >
+                Back to setup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
