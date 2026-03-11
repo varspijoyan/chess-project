@@ -102,6 +102,18 @@ and generate the UI with functionality.
 Also count captured pieces.
 ```
 
+### Prompt 8
+
+```
+Generate a component which will display a history of each player steps
+```
+
+### Prompt 9
+
+```
+move this component on the side of the board
+```
+
 ---
 
 ## 🚀 Getting Started
