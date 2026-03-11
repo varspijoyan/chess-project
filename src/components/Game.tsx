@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/game.css";
 import type { GameConfig } from "../types";
 import { ChessBoard } from "./ChessBoard";
+import { MoveHistory } from "./MoveHistory";
 import { useChessGame } from "../hooks/useChessGame";
 
 export interface GameProps {
@@ -17,6 +18,7 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
     legalTargets,
     status,
     winner,
+    history,
     capturedBy,
     clickSquare,
     reset
@@ -57,12 +59,16 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
         </div>
       </header>
 
-      <ChessBoard
-        board={board}
-        selected={selected}
-        legalTargets={legalTargets}
-        onSquareClick={clickSquare}
-      />
+      <div className="game__content">
+        <ChessBoard
+          board={board}
+          selected={selected}
+          legalTargets={legalTargets}
+          onSquareClick={clickSquare}
+        />
+
+        <MoveHistory history={history} />
+      </div>
     </section>
   );
 };

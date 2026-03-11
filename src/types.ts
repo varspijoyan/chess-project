@@ -27,6 +27,15 @@ export interface Move {
   promotion?: Exclude<PieceType, "k">;
 }
 
+export interface MoveRecord {
+  by: PlayerColor;
+  piece: PieceType;
+  from: Square;
+  to: Square;
+  capture: boolean;
+  promotion?: Exclude<PieceType, "k">;
+}
+
 export type Board = Array<Array<Piece | null>>;
 
 export type GameStatus = "playing" | "checkmate" | "stalemate";

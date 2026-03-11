@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Board, GameConfig, Move, Piece, PieceType, PlayerColor, Square, GameStatus } from "../types";
+import type {
+  Board,
+  GameConfig,
+  GameStatus,
+  Move,
+  MoveRecord,
+  Piece,
+  PieceType,
+  PlayerColor,
+  Square
+} from "../types";
 
 const opposite = (c: PlayerColor): PlayerColor => (c === "white" ? "black" : "white");
 
@@ -211,6 +221,7 @@ export const useChessGame = (config: GameConfig) => {
   const [selected, setSelected] = useState<Square | null>(null);
   const [status, setStatus] = useState<GameStatus>("playing");
   const [winner, setWinner] = useState<PlayerColor | null>(null);
+  const [history, setHistory] = useState<MoveRecord[]>([]);
   const [capturedBy, setCapturedBy] = useState<Record<PlayerColor, number>>({
     white: 0,
     black: 0
@@ -240,13 +251,26 @@ export const useChessGame = (config: GameConfig) => {
     setSelected(null);
     setStatus("playing");
     setWinner(null);
+    setHistory([]);
     setCapturedBy({ white: 0, black: 0 });
   };
 
   const doMove = (move: Move) => {
+    const mover = getPiece(board, move.from);
     const target = getPiece(board, move.to);
     if (target) {
       setCapturedBy((prev) => ({ ...prev, [turn]: prev[turn] + 1 }));
+    }
+    if (mover) {
+      const rec: MoveRecord = {
+        by: turn,
+        piece: mover.type,
+        from: move.from,
+        to: move.to,
+        capture: Boolean(target),
+        promotion: move.promotion
+      };
+      setHistory((prev) => [...prev, rec]);
     }
     setBoard((prev) => applyMove(prev, move));
     setSelected(null);
@@ -322,6 +346,7 @@ export const useChessGame = (config: GameConfig) => {
     legalTargets,
     status,
     winner,
+    history,
     capturedBy,
     clickSquare,
     reset
