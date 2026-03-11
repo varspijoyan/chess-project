@@ -123,7 +123,7 @@ Generate the checkmate logic and provide a popup window or text, that will be ap
 ### Prompt 11
 
 ```
-make the square same height and weight
+make the square same height and width
 ```
 
 ---
