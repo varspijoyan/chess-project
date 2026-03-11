@@ -198,21 +198,39 @@ const allMovesForColor = (board: Board, color: PlayerColor): Move[] => {
   }
   return moves;
 };
-
-const detectWinnerByKingCapture = (board: Board): PlayerColor | null => {
-  let whiteKing = false;
-  let blackKing = false;
+const findKingSquare = (board: Board, color: PlayerColor): Square | null => {
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
       const p = board[y][x];
-      if (!p) continue;
-      if (p.type === "k" && p.color === "white") whiteKing = true;
-      if (p.type === "k" && p.color === "black") blackKing = true;
+      if (p && p.color === color && p.type === "k") {
+        return { x, y };
+      }
     }
   }
-  if (!whiteKing) return "black";
-  if (!blackKing) return "white";
   return null;
+};
+
+const isSquareAttackedBy = (board: Board, sq: Square, attacker: PlayerColor): boolean => {
+  const moves = allMovesForColor(board, attacker);
+  return moves.some((m) => sameSquare(m.to, sq));
+};
+
+const isKingInCheck = (board: Board, color: PlayerColor): boolean => {
+  const kingSq = findKingSquare(board, color);
+  if (!kingSq) return false;
+  return isSquareAttackedBy(board, kingSq, opposite(color));
+};
+
+const allLegalMovesForColor = (board: Board, color: PlayerColor): Move[] => {
+  const pseudo = allMovesForColor(board, color);
+  const legal: Move[] = [];
+  for (const mv of pseudo) {
+    const next = applyMove(board, mv);
+    if (!isKingInCheck(next, color)) {
+      legal.push(mv);
+    }
+  }
+  return legal;
 };
 
 export const useChessGame = (config: GameConfig) => {
@@ -242,7 +260,19 @@ export const useChessGame = (config: GameConfig) => {
     const piece = getPiece(board, selected);
     if (!piece) return [];
     if (piece.color !== turn) return [];
-    return legalTargetsFor(board, selected);
+
+    const pseudoTargets = legalTargetsFor(board, selected);
+    const safeTargets: Square[] = [];
+
+    for (const to of pseudoTargets) {
+      const trial: Move = { from: selected, to };
+      const nextBoard = applyMove(board, trial);
+      if (!isKingInCheck(nextBoard, turn)) {
+        safeTargets.push(to);
+      }
+    }
+
+    return safeTargets;
   }, [board, selected, turn]);
 
   const reset = () => {
@@ -309,14 +339,23 @@ export const useChessGame = (config: GameConfig) => {
     doMove({ from: selected, to: sq });
   };
 
-  // winner detection (by king capture, minimal for now)
+  // checkmate / stalemate detection
   useEffect(() => {
-    const w = detectWinnerByKingCapture(board);
-    if (w) {
-      setWinner(w);
-      setStatus("checkmate");
+    if (status !== "playing") return;
+
+    const current = turn;
+    const moves = allLegalMovesForColor(board, current);
+    const inCheck = isKingInCheck(board, current);
+
+    if (moves.length === 0) {
+      if (inCheck) {
+        setWinner(opposite(current));
+        setStatus("checkmate");
+      } else {
+        setStatus("stalemate");
+      }
     }
-  }, [board]);
+  }, [board, status, turn]);
 
   // robot: random legal move
   useEffect(() => {
@@ -325,11 +364,8 @@ export const useChessGame = (config: GameConfig) => {
     if (!robotColor) return;
     if (turn !== robotColor) return;
 
-    const moves = allMovesForColor(board, robotColor);
-    if (moves.length === 0) {
-      setStatus("stalemate");
-      return;
-    }
+    const moves = allLegalMovesForColor(board, robotColor);
+    if (moves.length === 0) return;
 
     const t = window.setTimeout(() => {
       const pick = moves[Math.floor(Math.random() * moves.length)];

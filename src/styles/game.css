@@ -3,6 +3,47 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  position: relative;
+}
+
+.game__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95));
+  backdrop-filter: blur(4px);
+  z-index: 20;
+}
+
+.game__dialog {
+  min-width: 260px;
+  max-width: 340px;
+  padding: 1.25rem 1.4rem;
+  border-radius: 1rem;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+.game__dialog-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.35rem;
+  color: #e5e7eb;
+}
+
+.game__dialog-text {
+  margin: 0 0 1rem 0;
+  font-size: 0.98rem;
+  color: #d1d5db;
+}
+
+.game__dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .game__content {
