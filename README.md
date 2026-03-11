@@ -114,6 +114,18 @@ Generate a component which will display a history of each player steps
 move this component on the side of the board
 ```
 
+### Prompt 10
+
+```
+Generate the checkmate logic and provide a popup window or text, that will be appeared after checkmate
+```
+
+### Prompt 11
+
+```
+make the square same height and weight
+```
+
 ---
 
 ## 🚀 Getting Started
