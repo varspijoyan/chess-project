@@ -1,8 +1,14 @@
 .game {
-  width: min(92vw, 720px);
+  width: min(92vw, 980px);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+
+.game__content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .game__header {
@@ -50,5 +56,115 @@
 
 .game__meta-label {
   font-weight: 700;
+}
+
+.history {
+  flex: 0 0 360px;
+  width: min(92vw, 360px);
+  height: min(92vw, 520px);
+  border: 1px solid rgba(156, 163, 175, 0.35);
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: rgba(17, 24, 39, 0.35);
+  display: flex;
+  flex-direction: column;
+}
+
+.history__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.history__title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #e5e7eb;
+}
+
+.history__count {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.history__empty {
+  color: #9ca3af;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.25rem;
+}
+
+.history__columns {
+  flex: 1;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.history__col-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e5e7eb;
+  margin: 0 0 0.35rem 0;
+}
+
+.history__moves {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.history__move {
+  color: #9ca3af;
+}
+
+.history__move-text {
+  display: block;
+}
+
+.history__cell {
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(156, 163, 175, 0.25);
+  background: rgba(3, 7, 18, 0.35);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.95rem;
+}
+
+.history__cell--white {
+  border-color: rgba(229, 231, 235, 0.25);
+}
+
+.history__cell--black {
+  border-color: rgba(75, 85, 99, 0.5);
+}
+
+@media (max-width: 860px) {
+  .game__content {
+    flex-direction: column;
+  }
+
+  .history {
+    width: 100%;
+    flex-basis: auto;
+    height: auto;
+  }
+
+  .history__columns {
+    max-height: 240px;
+    flex: none;
+  }
+
+  .history__moves {
+    padding-left: 1.1rem;
+  }
 }
 
