@@ -233,6 +233,22 @@ const allLegalMovesForColor = (board: Board, color: PlayerColor): Move[] => {
   return legal;
 };
 
+const pieceValueForAI = (type: PieceType): number => {
+  switch (type) {
+    case "p":
+      return 1;
+    case "n":
+    case "b":
+      return 3;
+    case "r":
+      return 5;
+    case "q":
+      return 9;
+    case "k":
+      return 0;
+  }
+};
+
 export const useChessGame = (config: GameConfig) => {
   const [board, setBoard] = useState<Board>(() => initialBoard());
   const [turn, setTurn] = useState<PlayerColor>(config.startingColor);
@@ -312,6 +328,37 @@ export const useChessGame = (config: GameConfig) => {
     setWinner(null);
     setHistory(trimmedHistory);
     setCapturedBy(nextCaptured);
+  };
+
+  const helperMove = () => {
+    if (status !== "playing") return;
+
+    // Don't interfere during robot's own turn
+    if (config.mode === "vs-robot" && robotColor && turn === robotColor) {
+      return;
+    }
+
+    const moves = allLegalMovesForColor(board, turn);
+    if (moves.length === 0) return;
+
+    // Simple heuristic: prefer biggest capture, otherwise any move
+    let best: Move | null = null;
+    let bestScore = -Infinity;
+
+    for (const mv of moves) {
+      const target = getPiece(board, mv.to);
+      const score = target ? pieceValueForAI(target.type) : 0;
+      if (score > bestScore) {
+        bestScore = score;
+        best = mv;
+      }
+    }
+
+    if (!best) {
+      best = moves[Math.floor(Math.random() * moves.length)];
+    }
+
+    doMove(best);
   };
 
   const doMove = (move: Move) => {
@@ -416,7 +463,8 @@ export const useChessGame = (config: GameConfig) => {
     capturedBy,
     clickSquare,
     reset,
-    undoLastMove
+    undoLastMove,
+    helperMove
   };
 };
 
