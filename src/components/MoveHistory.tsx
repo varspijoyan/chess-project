@@ -42,10 +42,18 @@ const pieceName = (t: PieceType) => {
 const sq = (x: number, y: number) => `${String.fromCharCode(97 + x)}${8 - y}`;
 
 const moveText = (m: MoveRecord) => {
-  const name = pieceName(m.piece);
-  const cap = m.capture ? "x" : "→";
-  const promo = m.promotion ? `=${pieceLabel(m.promotion) || "Q"}` : "";
-  return `${name} - ${sq(m.from.x, m.from.y)}${cap}${sq(m.to.x, m.to.y)}${promo}`;
+  const attacker = pieceName(m.piece);
+
+  // If no capture, just show the moving piece name
+  if (!m.capture || !m.capturedPiece) {
+    const promo = m.promotion ? ` -> ${pieceName(m.promotion)}` : "";
+    return `${attacker}${promo}`;
+  }
+
+  // Capture: "Attacker -> Victim"
+  const victim = pieceName(m.capturedPiece);
+  const promo = m.promotion ? ` -> ${pieceName(m.promotion)}` : "";
+  return `${attacker} -> ${victim}${promo}`;
 };
 
 export const MoveHistory: React.FC<MoveHistoryProps> = ({ history }) => {

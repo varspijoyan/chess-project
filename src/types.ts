@@ -33,6 +33,7 @@ export interface MoveRecord {
   from: Square;
   to: Square;
   capture: boolean;
+  capturedPiece?: PieceType;
   promotion?: Exclude<PieceType, "k">;
 }
 

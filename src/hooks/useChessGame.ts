@@ -298,6 +298,7 @@ export const useChessGame = (config: GameConfig) => {
         from: move.from,
         to: move.to,
         capture: Boolean(target),
+        capturedPiece: target?.type,
         promotion: move.promotion
       };
       setHistory((prev) => [...prev, rec]);
