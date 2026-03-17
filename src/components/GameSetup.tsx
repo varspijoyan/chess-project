@@ -11,8 +11,7 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStart }) => {
   const {
     mode,
     startingColor,
-    handleModeChange,
-    handleColorChange
+    handleModeChange
   } = useGameSetup();
 
   return (
@@ -45,30 +44,6 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStart }) => {
               onClick={() => handleModeChange("vs-robot")}
             >
               vs Robot
-            </button>
-          </div>
-        </div>
-
-        <div className="game-setup__group">
-          <h2 className="game-setup__group-title">Who starts?</h2>
-          <div className="game-setup__buttons">
-            <button
-              type="button"
-              className={`game-setup__button ${
-                startingColor === "white" ? "game-setup__button--active" : ""
-              }`}
-              onClick={() => handleColorChange("white")}
-            >
-              White
-            </button>
-            <button
-              type="button"
-              className={`game-setup__button ${
-                startingColor === "black" ? "game-setup__button--active" : ""
-              }`}
-              onClick={() => handleColorChange("black")}
-            >
-              Black
             </button>
           </div>
         </div>

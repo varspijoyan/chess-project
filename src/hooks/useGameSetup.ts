@@ -9,15 +9,10 @@ export const useGameSetup = () => {
     setMode(nextMode);
   };
 
-  const handleColorChange = (color: PlayerColor) => {
-    setStartingColor(color);
-  };
-
   return {
     mode,
     startingColor,
-    handleModeChange,
-    handleColorChange
+    handleModeChange
   };
 };
 
