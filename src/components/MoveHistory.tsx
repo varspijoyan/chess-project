@@ -5,23 +5,6 @@ export interface MoveHistoryProps {
   history: MoveRecord[];
 }
 
-const pieceLabel = (t: PieceType) => {
-  switch (t) {
-    case "k":
-      return "K";
-    case "q":
-      return "Q";
-    case "r":
-      return "R";
-    case "b":
-      return "B";
-    case "n":
-      return "N";
-    case "p":
-      return "";
-  }
-};
-
 const pieceName = (t: PieceType) => {
   switch (t) {
     case "k":
@@ -39,7 +22,21 @@ const pieceName = (t: PieceType) => {
   }
 };
 
-const sq = (x: number, y: number) => `${String.fromCharCode(97 + x)}${8 - y}`;
+const pieceValue = (t: PieceType): number => {
+  switch (t) {
+    case "p":
+      return 1;
+    case "n":
+    case "b":
+      return 3;
+    case "r":
+      return 5;
+    case "q":
+      return 9;
+    case "k":
+      return 0; // king is invaluable, don't count
+  }
+};
 
 const moveText = (m: MoveRecord) => {
   const attacker = pieceName(m.piece);
@@ -60,6 +57,22 @@ export const MoveHistory: React.FC<MoveHistoryProps> = ({ history }) => {
   const whiteMoves = useMemo(() => history.filter((m) => m.by === "white"), [history]);
   const blackMoves = useMemo(() => history.filter((m) => m.by === "black"), [history]);
 
+  const whitePoints = useMemo(
+    () =>
+      history
+        .filter((m) => m.by === "white" && m.capture && m.capturedPiece)
+        .reduce((sum, m) => sum + pieceValue(m.capturedPiece!), 0),
+    [history]
+  );
+
+  const blackPoints = useMemo(
+    () =>
+      history
+        .filter((m) => m.by === "black" && m.capture && m.capturedPiece)
+        .reduce((sum, m) => sum + pieceValue(m.capturedPiece!), 0),
+    [history]
+  );
+
   return (
     <aside className="history" aria-label="Move history">
       <div className="history__header">
@@ -72,7 +85,9 @@ export const MoveHistory: React.FC<MoveHistoryProps> = ({ history }) => {
       ) : (
         <div className="history__columns">
           <section className="history__col" aria-label="White moves">
-            <div className="history__col-title">White</div>
+            <div className="history__col-title">
+              White <span className="history__score">({whitePoints} pts)</span>
+            </div>
             <ol className="history__moves">
               {whiteMoves.map((m, idx) => (
                 <li key={`${m.by}-${idx}`} className="history__move">
@@ -85,7 +100,9 @@ export const MoveHistory: React.FC<MoveHistoryProps> = ({ history }) => {
           </section>
 
           <section className="history__col" aria-label="Black moves">
-            <div className="history__col-title">Black</div>
+            <div className="history__col-title">
+              Black <span className="history__score">({blackPoints} pts)</span>
+            </div>
             <ol className="history__moves">
               {blackMoves.map((m, idx) => (
                 <li key={`${m.by}-${idx}`} className="history__move">
