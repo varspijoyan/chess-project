@@ -21,7 +21,8 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
     history,
     capturedBy,
     clickSquare,
-    reset
+    reset,
+    undoLastMove
   } = useChessGame(config);
 
   return (
@@ -30,6 +31,14 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
         <div className="game__title-row">
           <h1 className="game__title">Game</h1>
           <div className="game__buttons">
+            <button
+              type="button"
+              className="game__button"
+              onClick={undoLastMove}
+              disabled={history.length === 0 || status !== "playing"}
+            >
+              Undo move
+            </button>
             <button type="button" className="game__button" onClick={reset}>
               Reset
             </button>

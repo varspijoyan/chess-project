@@ -285,6 +285,35 @@ export const useChessGame = (config: GameConfig) => {
     setCapturedBy({ white: 0, black: 0 });
   };
 
+  const undoLastMove = () => {
+    if (history.length === 0) return;
+
+    const trimmedHistory = history.slice(0, -1);
+
+    // Rebuild board and capture counts from scratch based on remaining history
+    let nextBoard: Board = initialBoard();
+    let nextTurn: PlayerColor = config.startingColor;
+    const nextCaptured: Record<PlayerColor, number> = { white: 0, black: 0 };
+
+    for (const h of trimmedHistory) {
+      const move: Move = { from: h.from, to: h.to, promotion: h.promotion };
+      const before = getPiece(nextBoard, h.to);
+      if (before && before.color !== h.by) {
+        nextCaptured[h.by] += 1;
+      }
+      nextBoard = applyMove(nextBoard, move);
+      nextTurn = opposite(h.by);
+    }
+
+    setBoard(nextBoard);
+    setTurn(nextTurn);
+    setSelected(null);
+    setStatus("playing");
+    setWinner(null);
+    setHistory(trimmedHistory);
+    setCapturedBy(nextCaptured);
+  };
+
   const doMove = (move: Move) => {
     const mover = getPiece(board, move.from);
     const target = getPiece(board, move.to);
@@ -386,7 +415,8 @@ export const useChessGame = (config: GameConfig) => {
     history,
     capturedBy,
     clickSquare,
-    reset
+    reset,
+    undoLastMove
   };
 };
 
