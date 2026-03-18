@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/board.css";
-import type { Board, Piece, PlayerColor, Square } from "../types";
+import type { Board, Square } from "../types";
+import { PieceIcon } from "./PieceIcon";
 
 export interface ChessBoardProps {
   board: Board;
@@ -8,14 +9,6 @@ export interface ChessBoardProps {
   legalTargets: Square[];
   onSquareClick: (sq: Square) => void;
 }
-
-const pieceToSymbol = (piece: Piece): string => {
-  const map: Record<PlayerColor, Record<Piece["type"], string>> = {
-    white: { k: "♔", q: "♕", r: "♖", b: "♗", n: "♘", p: "♙" },
-    black: { k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟" }
-  };
-  return map[piece.color][piece.type];
-};
 
 const sameSquare = (a: Square, b: Square) => a.x === b.x && a.y === b.y;
 
@@ -53,9 +46,7 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
               aria-label={`Square ${String.fromCharCode(97 + x)}${8 - y}`}
             >
               {cell ? (
-                <span className="board__piece" aria-hidden="true">
-                  {pieceToSymbol(cell)}
-                </span>
+                <PieceIcon piece={cell} />
               ) : null}
               {isLegal ? <span className="board__dot" aria-hidden="true" /> : null}
             </button>

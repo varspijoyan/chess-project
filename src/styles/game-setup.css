@@ -18,7 +18,7 @@
 
 .game-setup__subtitle {
   font-size: 0.95rem;
-  color: #9ca3af;
+  color: var(--muted-text);
 }
 
 .game-setup__options {
@@ -46,9 +46,9 @@
   flex: 1;
   padding: 0.6rem 0.9rem;
   border-radius: 999px;
-  border: 1px solid rgba(156, 163, 175, 0.6);
-  background: transparent;
-  color: inherit;
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--text-color);
   font-size: 0.95rem;
   cursor: pointer;
   transition:
@@ -61,19 +61,20 @@
 .game-setup__button:hover {
   transform: translateY(-1px);
   border-color: var(--accent-color);
+  background-color: rgba(250, 204, 21, 0.14);
 }
 
 .game-setup__button--active {
   background-color: var(--accent-color);
-  color: #020617;
+  color: var(--text-on-accent);
   border-color: transparent;
 }
 
 .game-setup__summary {
   text-align: left;
   font-size: 0.95rem;
-  color: #d1d5db;
-  border-top: 1px solid rgba(55, 65, 81, 0.9);
+  color: var(--muted-text);
+  border-top: 1px solid var(--border-color);
   padding-top: 0.75rem;
 }
 
@@ -91,7 +92,7 @@
   border-radius: 999px;
   border: 1px solid transparent;
   background-color: var(--accent-color);
-  color: #020617;
+  color: var(--text-on-accent);
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.1s ease-out, filter 0.15s ease-out;
