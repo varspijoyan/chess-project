@@ -10,6 +10,12 @@ export interface GameProps {
   onBack: () => void;
 }
 
+const formatClock = (totalSeconds: number) => {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+};
+
 export const Game: React.FC<GameProps> = ({ config, onBack }) => {
   const {
     board,
@@ -20,6 +26,8 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
     winner,
     history,
     capturedBy,
+    turnSecondsRemaining,
+    turnTimeLimitSeconds,
     clickSquare,
     attemptMove,
     beginPieceDrag,
@@ -70,6 +78,19 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
             {turn === "white" ? "White" : "Black"}
           </div>
           <div>
+            <span className="game__meta-label">Clock:</span>{" "}
+            <span
+              className={
+                status === "playing" && turnSecondsRemaining <= 60
+                  ? "game__timer game__timer--low"
+                  : "game__timer"
+              }
+            >
+              {formatClock(turnSecondsRemaining)} / {formatClock(turnTimeLimitSeconds)}
+            </span>
+            <span className="game__timer-hint"> (per move)</span>
+          </div>
+          <div>
             <span className="game__meta-label">Status:</span> {status}
             {winner ? ` (${winner} wins)` : ""}
           </div>
@@ -95,16 +116,22 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
         <MoveHistory history={history} />
       </div>
 
-      {(status === "checkmate" || status === "stalemate") && (
+      {(status === "checkmate" || status === "stalemate" || status === "timeout") && (
         <div className="game__overlay" role="dialog" aria-modal="true">
           <div className="game__dialog">
             <h2 className="game__dialog-title">
-              {status === "checkmate" ? "Checkmate" : "Stalemate"}
+              {status === "checkmate"
+                ? "Checkmate"
+                : status === "stalemate"
+                  ? "Stalemate"
+                  : "Time out"}
             </h2>
             <p className="game__dialog-text">
               {status === "checkmate" && winner
                 ? `${winner === "white" ? "White" : "Black"} wins by checkmate.`
-                : "Draw by stalemate."}
+                : status === "timeout" && winner
+                  ? `${winner === "white" ? "White" : "Black"} wins on time.`
+                  : "Draw by stalemate."}
             </p>
             <div className="game__dialog-actions">
               <button

@@ -103,6 +103,21 @@
   font-weight: 700;
 }
 
+.game__timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.game__timer--low {
+  color: #b45309;
+}
+
+.game__timer-hint {
+  font-weight: 400;
+  color: var(--muted-text);
+}
+
 .history {
   flex: 0 0 360px;
   width: min(92vw, 360px);

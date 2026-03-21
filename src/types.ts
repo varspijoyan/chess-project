@@ -39,4 +39,4 @@ export interface MoveRecord {
 
 export type Board = Array<Array<Piece | null>>;
 
-export type GameStatus = "playing" | "checkmate" | "stalemate";
+export type GameStatus = "playing" | "checkmate" | "stalemate" | "timeout";
