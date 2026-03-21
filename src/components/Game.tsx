@@ -21,6 +21,9 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
     history,
     capturedBy,
     clickSquare,
+    attemptMove,
+    beginPieceDrag,
+    canInteractWithBoard,
     reset,
     undoLastMove,
     helperMove
@@ -83,6 +86,10 @@ export const Game: React.FC<GameProps> = ({ config, onBack }) => {
           selected={selected}
           legalTargets={legalTargets}
           onSquareClick={clickSquare}
+          turn={turn}
+          canInteractWithBoard={canInteractWithBoard}
+          onMove={attemptMove}
+          onPieceDragStart={beginPieceDrag}
         />
 
         <MoveHistory history={history} />

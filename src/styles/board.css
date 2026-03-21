@@ -1,3 +1,10 @@
+/* 3D-style depth via shadows only — board is flat (no rotation). */
+
+.board__scene {
+  display: inline-block;
+  padding: 0.25rem 0.25rem 0.75rem;
+}
+
 .board {
   width: min(92vw, 520px);
   aspect-ratio: 1 / 1;
@@ -6,6 +13,13 @@
   border-radius: 0.75rem;
   overflow: hidden;
   border: 1px solid var(--border-strong);
+  /* Thick “wood” frame + depth (no perspective tilt) */
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.12) inset,
+    0 18px 36px rgba(15, 23, 42, 0.28),
+    0 8px 16px rgba(15, 23, 42, 0.15),
+    0 0 0 3px rgba(43, 27, 18, 0.12);
 }
 
 .board__square {
@@ -17,6 +31,11 @@
   border: 0;
   padding: 0;
   cursor: pointer;
+  /* Tile bevel: light top-left, shadow bottom-right (does not replace base colors) */
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.22),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.12),
+    inset 0 0 10px rgba(0, 0, 0, 0.04);
 }
 
 .board__square--light {
@@ -30,17 +49,45 @@
 .board__square--selected {
   outline: 3px solid rgba(250, 204, 21, 0.9);
   outline-offset: -3px;
+  z-index: 1;
 }
 
 .board__square--legal {
-  box-shadow: inset 0 0 0 3px rgba(250, 204, 21, 0.35);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.22),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.12),
+    inset 0 0 0 3px rgba(250, 204, 21, 0.35);
 }
 
 .board__pieceImg {
   width: clamp(28px, 5.6vw, 44px);
   height: auto;
   user-select: none;
-  filter: drop-shadow(0 2px 1px rgba(15, 23, 42, 0.18));
+  position: relative;
+  z-index: 1;
+}
+
+/* 3D depth on figures: stacked shadows only (SVG colors unchanged). */
+.board__pieceImg--white {
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.45))
+    drop-shadow(0 4px 3px rgba(0, 0, 0, 0.28))
+    drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
+}
+
+.board__pieceImg--black {
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.12))
+    drop-shadow(0 4px 3px rgba(0, 0, 0, 0.35))
+    drop-shadow(0 10px 18px rgba(0, 0, 0, 0.25));
+}
+
+.board__pieceImg--draggable {
+  cursor: grab;
+}
+
+.board__pieceImg--draggable:active {
+  cursor: grabbing;
 }
 
 .board__dot {
@@ -48,6 +95,7 @@
   width: 12px;
   height: 12px;
   border-radius: 999px;
-  background-color: rgba(15, 23, 42, 0.22);
+  background: radial-gradient(ellipse at 30% 30%, rgba(255, 255, 255, 0.35), transparent 50%),
+    rgba(15, 23, 42, 0.35);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
 }
-

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type {
   Board,
   GameConfig,
@@ -250,6 +250,9 @@ const pieceValueForAI = (type: PieceType): number => {
 };
 
 export const useChessGame = (config: GameConfig) => {
+  /** After a drag-and-drop, the browser fires a click on the drop target — skip one click. */
+  const suppressNextSquareClick = useRef(false);
+
   const [board, setBoard] = useState<Board>(() => initialBoard());
   const [turn, setTurn] = useState<PlayerColor>(config.startingColor);
   const [selected, setSelected] = useState<Square | null>(null);
@@ -384,7 +387,51 @@ export const useChessGame = (config: GameConfig) => {
     setTurn((t) => opposite(t));
   };
 
+  /** Select the dragged piece so legal targets highlight while dragging. */
+  const beginPieceDrag = (sq: Square) => {
+    if (status !== "playing") return;
+    if (config.mode === "vs-robot" && robotColor && turn === robotColor) {
+      return;
+    }
+    const piece = getPiece(board, sq);
+    if (!piece || piece.color !== turn) return;
+    setSelected(sq);
+  };
+
+  /** Used for drag-and-drop (and not click-to-move). Suppresses the extra click the browser fires after drop. */
+  const attemptMove = (from: Square, to: Square) => {
+    suppressNextSquareClick.current = true;
+
+    if (status !== "playing") return;
+    if (config.mode === "vs-robot" && robotColor && turn === robotColor) {
+      return;
+    }
+    if (sameSquare(from, to)) return;
+
+    const piece = getPiece(board, from);
+    if (!piece || piece.color !== turn) return;
+
+    const pseudoTargets = legalTargetsFor(board, from);
+    const safeTargets: Square[] = [];
+    for (const t of pseudoTargets) {
+      const trial: Move = { from, to: t };
+      const nextBoard = applyMove(board, trial);
+      if (!isKingInCheck(nextBoard, turn)) {
+        safeTargets.push(t);
+      }
+    }
+
+    if (!safeTargets.some((t) => sameSquare(t, to))) return;
+
+    doMove({ from, to });
+  };
+
   const clickSquare = (sq: Square) => {
+    if (suppressNextSquareClick.current) {
+      suppressNextSquareClick.current = false;
+      return;
+    }
+
     if (status !== "playing") return;
 
     if (config.mode === "vs-robot" && robotColor && turn === robotColor) {
@@ -452,6 +499,10 @@ export const useChessGame = (config: GameConfig) => {
     return () => window.clearTimeout(t);
   }, [board, config.mode, robotColor, status, turn]);
 
+  const canInteractWithBoard =
+    status === "playing" &&
+    !(config.mode === "vs-robot" && robotColor !== null && turn === robotColor);
+
   return {
     board,
     turn,
@@ -462,6 +513,9 @@ export const useChessGame = (config: GameConfig) => {
     history,
     capturedBy,
     clickSquare,
+    attemptMove,
+    beginPieceDrag,
+    canInteractWithBoard,
     reset,
     undoLastMove,
     helperMove

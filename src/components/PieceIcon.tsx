@@ -4,6 +4,9 @@ import type { Piece, PieceType, PlayerColor } from "../types";
 type Props = {
   piece: Pick<Piece, "type" | "color">;
   className?: string;
+  draggable?: boolean;
+  onDragStart?: React.DragEventHandler<HTMLImageElement>;
+  onDragEnd?: React.DragEventHandler<HTMLImageElement>;
 };
 
 const WIKI_BASE = "https://upload.wikimedia.org/wikipedia/commons";
@@ -29,16 +32,31 @@ const SRC: Record<PlayerColor, Record<PieceType, string>> = {
   }
 };
 
-export const PieceIcon: React.FC<Props> = ({ piece, className }) => {
+export const PieceIcon: React.FC<Props> = ({
+  piece,
+  className,
+  draggable = false,
+  onDragStart,
+  onDragEnd
+}) => {
   const src = SRC[piece.color][piece.type];
 
   return (
     <img
-      className={["board__pieceImg", className].filter(Boolean).join(" ")}
+      className={[
+        "board__pieceImg",
+        piece.color === "white" ? "board__pieceImg--white" : "board__pieceImg--black",
+        draggable ? "board__pieceImg--draggable" : "",
+        className
+      ]
+        .filter(Boolean)
+        .join(" ")}
       src={src}
       alt=""
       aria-hidden="true"
-      draggable={false}
+      draggable={draggable}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
       loading="lazy"
     />
   );
