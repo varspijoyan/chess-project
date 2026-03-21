@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { playPieceMoveSound } from "../audio/chessMoveSound";
 import type {
   Board,
   GameConfig,
@@ -233,6 +234,9 @@ const allLegalMovesForColor = (board: Board, color: PlayerColor): Move[] => {
   return legal;
 };
 
+/** Fischer-style: each side gets this many seconds on their own clock each move. */
+const TURN_SECONDS = 5 * 60;
+
 const pieceValueForAI = (type: PieceType): number => {
   switch (type) {
     case "p":
@@ -263,6 +267,7 @@ export const useChessGame = (config: GameConfig) => {
     white: 0,
     black: 0
   });
+  const [turnSecondsRemaining, setTurnSecondsRemaining] = useState(TURN_SECONDS);
 
   const humanColor = useMemo(() => {
     if (config.mode !== "vs-robot") return null;
@@ -302,6 +307,7 @@ export const useChessGame = (config: GameConfig) => {
     setWinner(null);
     setHistory([]);
     setCapturedBy({ white: 0, black: 0 });
+    setTurnSecondsRemaining(TURN_SECONDS);
   };
 
   const undoLastMove = () => {
@@ -331,6 +337,7 @@ export const useChessGame = (config: GameConfig) => {
     setWinner(null);
     setHistory(trimmedHistory);
     setCapturedBy(nextCaptured);
+    setTurnSecondsRemaining(TURN_SECONDS);
   };
 
   const helperMove = () => {
@@ -367,6 +374,7 @@ export const useChessGame = (config: GameConfig) => {
   const doMove = (move: Move) => {
     const mover = getPiece(board, move.from);
     const target = getPiece(board, move.to);
+    playPieceMoveSound(Boolean(target));
     if (target) {
       setCapturedBy((prev) => ({ ...prev, [turn]: prev[turn] + 1 }));
     }
@@ -385,6 +393,7 @@ export const useChessGame = (config: GameConfig) => {
     setBoard((prev) => applyMove(prev, move));
     setSelected(null);
     setTurn((t) => opposite(t));
+    setTurnSecondsRemaining(TURN_SECONDS);
   };
 
   /** Select the dragged piece so legal targets highlight while dragging. */
@@ -463,7 +472,15 @@ export const useChessGame = (config: GameConfig) => {
     doMove({ from: selected, to: sq });
   };
 
-  // checkmate / stalemate detection
+  useEffect(() => {
+    if (status !== "playing") return;
+    const id = window.setInterval(() => {
+      setTurnSecondsRemaining((s) => (s > 0 ? s - 1 : 0));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [status, turn]);
+
+  // checkmate / stalemate / timeout (position outcomes before flag)
   useEffect(() => {
     if (status !== "playing") return;
 
@@ -478,8 +495,14 @@ export const useChessGame = (config: GameConfig) => {
       } else {
         setStatus("stalemate");
       }
+      return;
     }
-  }, [board, status, turn]);
+
+    if (turnSecondsRemaining === 0) {
+      setWinner(opposite(current));
+      setStatus("timeout");
+    }
+  }, [board, status, turn, turnSecondsRemaining]);
 
   // robot: random legal move
   useEffect(() => {
@@ -512,6 +535,8 @@ export const useChessGame = (config: GameConfig) => {
     winner,
     history,
     capturedBy,
+    turnSecondsRemaining,
+    turnTimeLimitSeconds: TURN_SECONDS,
     clickSquare,
     attemptMove,
     beginPieceDrag,
